@@ -87,7 +87,7 @@ Hệ thống hỗ trợ giám sát và điều khiển trên 3 giao diện độ
 
 ## 6. Hướng dẫn cài đặt & Khởi chạy nhanh
 
-### Khởi chạy Simulator giả lập (Dành cho Bạn B & C test sớm):
+### Khởi chạy Simulator giả lập:
 ```bash
 cd gateway/simulator
 python mock_node_b.py
