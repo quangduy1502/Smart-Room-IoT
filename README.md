@@ -21,9 +21,9 @@ Hệ thống hỗ trợ giám sát và điều khiển trên 3 giao diện độ
 
 | STT | Họ và tên | MSSV | Vai trò chính | Tiêu chí công nghệ phụ trách | Tỷ lệ |
 | :---: | :--- | :---: | :--- | :--- | :---: |
-| 1 | *[Thành viên A]* | *[MSSV]* | Firmware & Phần cứng | **T02** (Modbus RS485), **T06** (ESP-NOW), **T07** (Web ESP32) | 35% |
-| 2 | *[Thành viên B]* | *[MSSV]* | Gateway & Giao diện | **T08** (IoT Gateway), **T10** (Flask Local UI), HTML Web ESP32 | 35% |
-| 3 | *[Thành viên C]* | *[MSSV]* | Cloud & Kiểm thử | **T11** (Dashboard), **T12** (RuleChain), **T13** (Notification) | 30% |
+| 1 | Pan Yi Ting | 2414089 | Firmware & Phần cứng | **T02** (Modbus RS485), **T06** (ESP-NOW), **T07** (Web ESP32) | 35% |
+| 2 | Dương Gia Huy | 2211155 | Gateway & Giao diện | **T08** (IoT Gateway), **T10** (Flask Local UI), HTML Web ESP32 | 35% |
+| 3 | Bùi Quang Duy | 2410482 | Cloud & Kiểm thử | **T11** (Dashboard), **T12** (RuleChain), **T13** (Notification) | 30% |
 
 ---
 
