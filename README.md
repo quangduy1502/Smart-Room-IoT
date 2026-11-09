@@ -1,7 +1,7 @@
 # Hệ Thống Giám Sát Nhiệt Độ, Độ Ẩm Phòng Học & Điều Khiển LED
 
-> ⚠️ **TRẠNG THÁI DỰ ÁN:**  
-> Dự án hiện đang trong **giai đoạn khởi động và chuẩn bị (Tuần 10)**. Kho mã nguồn hiện tại là bộ khung (skeleton) ban đầu. Toàn bộ kiến trúc, chức năng và thông số kỹ thuật mô tả dưới đây là **thiết kế dự kiến**, sẽ được kiểm chứng và hoàn thiện dần qua từng tuần.
+> ⚠️ **TRẠNG THÁI DỰ ÁN (TUẦN 11):**  
+> Dự án đang trong **Tuần 11 (Giai đoạn hiện thực & kiểm chứng phần cứng cốt lõi)**: Đọc cảm biến Modbus RS485 thật trên Node A, truyền nhận không dây ESP-NOW sang Node B, và xây dựng cầu nối Serial $\leftrightarrow$ MQTT lên máy chủ CoreIOT. Các thông số và kiến trúc dưới đây là thiết kế chuẩn đang được triển khai.
 
 * **Môn học:** Internet of Things (IoT) – Học kỳ 261  
 * **Trường:** Đại học Bách Khoa - ĐHQG TP. Hồ Chí Minh  
