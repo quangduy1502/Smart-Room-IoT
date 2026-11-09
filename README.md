@@ -3,7 +3,7 @@
 > **Báo cáo Bài tập lớn môn Internet of Things (IoT) - Học kỳ 261**  
 > **Trường Đại học Bách Khoa - ĐHQG TP. Hồ Chí Minh**  
 > **Giảng viên hướng dẫn:** TS. Lê Trọng Nhân  
-> **Mục tiêu:** 8.0/8.0 Điểm công nghệ cốt lõi
+
 
 ---
 
