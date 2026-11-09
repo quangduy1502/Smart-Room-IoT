@@ -17,13 +17,13 @@ Hệ thống hỗ trợ giám sát và điều khiển trên 3 giao diện độ
 
 ---
 
-## 2. Bảng phân công thành viên
+## 2. Bảng phân công thành viên & Trạng thái triển khai
 
-| STT | Họ và tên | MSSV | Vai trò chính | Tiêu chí công nghệ phụ trách | Tỷ lệ |
-| :---: | :--- | :---: | :--- | :--- | :---: |
-| 1 | *[Thành viên A]* | *[MSSV]* | Firmware & Phần cứng | **T02** (Modbus RS485), **T06** (ESP-NOW), **T07** (Web ESP32) | 35% |
-| 2 | *[Thành viên B]* | *[MSSV]* | Gateway & Giao diện | **T08** (IoT Gateway), **T10** (Flask Local UI), HTML Web ESP32 | 35% |
-| 3 | *[Thành viên C]* | *[MSSV]* | Cloud & Kiểm thử | **T11** (Dashboard), **T12** (RuleChain), **T13** (Notification) | 30% |
+| STT | Thành viên | Vai trò chính | Tiêu chí công nghệ phụ trách | Trọng số | Trạng thái hiện tại |
+| :---: | :--- | :--- | :--- | :---: | :---: |
+| 1 | **Thành viên A** | Firmware & Phần cứng | **T02** (Modbus RS485), **T06** (ESP-NOW), **T07** (Web ESP32) | 35% | 🟡 Đang chuẩn bị linh kiện & code mẫu |
+| 2 | **Thành viên B** | Gateway & Giao diện | **T08** (IoT Gateway), **T10** (Flask Local UI), HTML Web ESP32 | 35% | 🟢 Đã hoàn thành bộ Mock 2 chiều |
+| 3 | **Thành viên C** | Cloud & Báo cáo | **T11** (Dashboard), **T12** (RuleChain), **T13** (Notification) | 30% | 🟡 Đang kết nối CoreIOT từ dữ liệu Mock |
 
 ---
 
@@ -43,61 +43,88 @@ Hệ thống hỗ trợ giám sát và điều khiển trên 3 giao diện độ
 
 ---
 
-## 4. Cấu trúc thư mục kho mã nguồn
+## 4. Cấu trúc thư mục & Trạng thái tệp tin
+
 ```text
-.
+smart-room-iot/
 ├── firmware/
-│   ├── node_a_sensor/       # Mã nguồn Node A: Modbus RS485 & ESP-NOW phát
-│   └── node_b_control/      # Mã nguồn Node B: ESP-NOW nhận, SoftAP, Webserver & Serial
+│   ├── node_a_sensor/           # [🟡 Đang phát triển] Firmware đọc Modbus RS485 & gửi ESP-NOW
+│   └── node_b_control/          # [🟡 Đang phát triển] Firmware nhận ESP-NOW, host SoftAP Web & Serial
 ├── gateway/
-│   ├── simulator/           # Trình giả lập Node B (mock_node_b.py) phục vụ test sớm
-│   ├── main.py              # Chương trình chính IoT Gateway
-│   ├── app_flask.py         # Web dashboard cục bộ trên Laptop (T10)
-│   ├── requirements.txt     # Danh sách thư viện Python (pyserial, paho-mqtt, flask)
-│   └── .env.example         # File mẫu cấu hình cổng COM, MQTT Broker, Token
-├── coreiot/                 # File export cấu hình Dashboard, RuleChain JSON
-├── docs/                    # Sơ đồ đấu dây, datasheet cảm biến, tài liệu thiết kế
-├── tests/                   # Bảng số liệu thực nghiệm (độ trễ, tỷ lệ mất gói 100 gói)
-└── README.md
+│   ├── simulator/
+│   │   └── mock_node_b.py       # [🟢 ĐÃ HOÀN THÀNH] Trình giả lập Node B (Telemetry + ACK 2 chiều)
+│   ├── requirements.txt         # [🟢 ĐÃ HOÀN THÀNH] Khai báo thư viện Python
+│   ├── .env.example             # [🟢 ĐÃ HOÀN THÀNH] Mẫu cấu hình cổng COM, MQTT Broker, Token (Bảo mật)
+│   ├── main.py                  # [⚪ Dự kiến Tuần 11] Chương trình chính IoT Gateway Python
+│   └── app_flask.py             # [⚪ Dự kiến Tuần 12] Web Dashboard cục bộ trên máy tính (T10)
+├── coreiot/                     # [⚪ Dự kiến Tuần 11-13] File export Dashboard & RuleChain JSON
+├── docs/                        # [⚪ Dự kiến Tuần 14-15] Sơ đồ đấu dây, datasheet cảm biến, tài liệu thiết kế
+├── tests/                       # [⚪ Dự kiến Tuần 14] Bảng số liệu thực nghiệm đo đạc (100 gói ESP-NOW, RPC latency)
+├── Ke_Hoach_Phan_Cong_BTL_IoT.docx  # [🟢 ĐÃ HOÀN THÀNH] Tài liệu phân công chi tiết 8.0/8.0 điểm
+└── README.md                    # [🟢 ĐÃ HOÀN THÀNH] Tài liệu hướng dẫn chung của dự án
 ```
 
 ---
 
-## 5. Chuẩn giao tiếp dữ liệu (Quy ước chung)
+## 5. Chuẩn giao tiếp dữ liệu & Quy ước ACK
 
-* **Baudrate Serial:** `115200`
-* **Wi-Fi Channel:** Cố định `Channel 1`
-* **Tên trường trạng thái LED đồng bộ 100%:** `cooling_state` (`true` / `false`)
+* **Tốc độ Serial:** `115200 baud` (mỗi gói kết thúc bằng `\n`)
+* **Kênh Wi-Fi:** Cố định cứng `Channel 1` cho cả Node A, Node B và SoftAP
+* **Tên trường trạng thái LED (đồng bộ 100%):** `cooling_state` (`true` hoặc `false`)
 
-### Gói tin Serial Telemetry (Node B -> Gateway):
-```json
-{"type":"telemetry", "seq":12, "temperature":28.5, "humidity":65.2, "cooling_state":false}
-```
+### 5.1. Dữ liệu cảm biến đẩy lên (Telemetry)
+* **Từ Node B sang Gateway (Serial):**
+  ```json
+  {"type":"telemetry", "seq":12, "temperature":28.5, "humidity":65.2, "cooling_state":false}
+  ```
+* **Từ Gateway lên CoreIOT (MQTT topic `v1/devices/me/telemetry`):**
+  ```json
+  {"temperature":28.5, "humidity":65.2, "cooling_state":false}
+  ```
 
-### Lệnh điều khiển Serial Command (Gateway -> Node B):
-```json
-{"type":"command", "cmd":"set_cooling", "state":true, "request_id":42}
-```
-
-### Lệnh MQTT Telemetry (Gateway -> CoreIOT):
-* **Topic:** `v1/devices/me/telemetry`
-* **Payload:** `{"temperature":28.5, "humidity":65.2, "cooling_state":false}`
+### 5.2. Lệnh điều khiển & Quy ước ACK (2-Way RPC)
+* **Lệnh từ Gateway gửi xuống Node B:**
+  ```json
+  {"type":"command", "cmd":"set_cooling", "state":true, "request_id":42}
+  ```
+* **Node B phản hồi xác nhận lệnh (ACK):**
+  ```json
+  {"type":"ack", "request_id":42, "ok":true, "cooling_state":true}
+  ```
+* **Quy định Timeout & Xử lý lỗi:**
+  * Gateway gửi lệnh xuống Node B và chờ tối đa **2000 ms (2 giây)**.
+  * Nếu quá 2 giây không nhận được gói ACK có đúng `request_id`, Gateway báo lỗi Timeout về CoreIOT:
+    `{"ok": false, "error": "Node B timeout"}` để tránh treo giao diện.
 
 ---
 
-## 6. Hướng dẫn cài đặt & Khởi chạy nhanh
+## 6. Hướng dẫn thử nghiệm ngay với Bộ giả lập Mock Simulator
 
-### Khởi chạy Simulator giả lập (Dành cho Bạn B & C test sớm):
+Trong Tuần 10, Bạn B và Bạn C có thể bắt đầu lập trình và kiểm thử ngay mà **không cần chờ phần cứng của Bạn A**:
+
 ```bash
+# 1. Di chuyển vào thư mục simulator
 cd gateway/simulator
+
+# 2. Khởi chạy bộ giả lập Node B (2 chiều)
 python mock_node_b.py
 ```
 
-### Cài đặt môi trường Gateway:
-```bash
-cd gateway
-pip install -r requirements.txt
-cp .env.example .env
-# Chỉnh sửa COM port và Access Token trong file .env
-python main.py
-```
+* **Quan sát:** Simulator sẽ tự động in ra chuỗi JSON telemetry mỗi 5 giây.
+* **Thử nghiệm gửi lệnh:** Copy và dán dòng JSON sau vào terminal rồi bấm Enter:
+  ```json
+  {"type":"command", "cmd":"set_cooling", "state":true, "request_id":1}
+  ```
+* **Kết quả:** Simulator sẽ phản hồi ngay lập tức gói ACK xác nhận và đổi trạng thái `cooling_state` sang `true`.
+
+---
+
+## 7. Quy định làm việc nhóm trên Git & GitHub
+
+1. **Tuyệt đối không push trực tiếp lên nhánh `main`:** Nhánh `main` chỉ dùng để lưu trữ các phiên bản ổn định đã qua kiểm thử.
+2. **Quy tắc tạo nhánh (Branching):**
+   * Bạn A làm việc trên nhánh: `feature/firmware-modbus-espnow`
+   * Bạn B làm việc trên nhánh: `feature/gateway-backend`
+   * Bạn C làm việc trên nhánh: `feature/coreiot-rulechain`
+3. **Quy trình Merge:** Mỗi khi hoàn thành một chức năng, push code lên nhánh của mình trên GitHub $\rightarrow$ Tạo **Pull Request (PR)** vào `main` $\rightarrow$ Nhờ ít nhất 1 thành viên khác review trước khi Merge.
+4. **Bảo mật:** Không bao giờ commit file `.env` chứa token thật lên GitHub (đã được cấu hình trong `.gitignore`).
