@@ -1,8 +1,5 @@
 # Hệ Thống Giám Sát Nhiệt Độ, Độ Ẩm Phòng Học & Điều Khiển LED
 
-> ⚠️ **TRẠNG THÁI DỰ ÁN (TUẦN 11):**  
-> Dự án đang trong giai đoạn hiện thực và kiểm chứng phần cứng cốt lõi: Giao tiếp cảm biến Modbus RS485 trên Node A, truyền thông không dây ESP-NOW sang Node B, và xây dựng cầu nối Serial $\leftrightarrow$ MQTT lên máy chủ CoreIOT. Các nội dung bên dưới là thiết kế chuẩn đang được triển khai.
-
 * **Môn học:** Internet of Things (IoT) – Học kỳ 261  
 * **Đơn vị:** Khoa Khoa học và Kỹ thuật Máy tính – Trường Đại học Bách Khoa, ĐHQG TP.HCM  
 * **Giảng viên hướng dẫn:** TS. Lê Trọng Nhân  
