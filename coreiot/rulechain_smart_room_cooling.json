@@ -1,0 +1,238 @@
+{
+  "ruleChain": {
+    "name": "Smart Room Auto Cooling (T12)",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode",
+        "name": "Phan loai ban tin",
+        "debugMode": true,
+        "configurationVersion": 0,
+        "configuration": {
+          "version": 0
+        },
+        "additionalInfo": {
+          "description": "Tach luong telemetry va attributes tu Gateway",
+          "layoutX": 50,
+          "layoutY": 220
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Luu Timeseries",
+        "debugMode": true,
+        "configurationVersion": 0,
+        "configuration": {
+          "defaultTTL": 0,
+          "skipLatestPersistence": false,
+          "useServerTs": false
+        },
+        "additionalInfo": {
+          "description": "Luu temperature, humidity, cooling_state vao co so du lieu",
+          "layoutX": 310,
+          "layoutY": 150
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Luu Attributes",
+        "debugMode": false,
+        "configurationVersion": 2,
+        "configuration": {
+          "scope": "CLIENT_SCOPE",
+          "notifyDevice": false,
+          "sendAttributesUpdatedNotification": false,
+          "updateAttributesOnlyOnValueChange": true
+        },
+        "additionalInfo": {
+          "description": "Luu client attributes neu Gateway gui len",
+          "layoutX": 310,
+          "layoutY": 300
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Phan loai nguong nhiet do",
+        "debugMode": true,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "if (msg.temperature == null) {\n  return ['Ignore'];\n}\nvar temp = Number(msg.temperature);\nif (temp > 32) {\n  return ['HighTemp'];\n}\nif (temp <= 30) {\n  return ['NormalTemp'];\n}\nreturn ['Hysteresis'];",
+          "tbelScript": "if (msg.temperature == null) {\n  return ['Ignore'];\n}\nif (msg.temperature > 32) {\n  return ['HighTemp'];\n}\nif (msg.temperature <= 30) {\n  return ['NormalTemp'];\n}\nreturn ['Hysteresis'];"
+        },
+        "additionalInfo": {
+          "description": ">32 C -> HighTemp; <=30 C -> NormalTemp; 30<T<=32 -> Hysteresis (giu nguyen)",
+          "layoutX": 570,
+          "layoutY": 150
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Create Alarm: High Temperature",
+        "debugMode": true,
+        "configurationVersion": 0,
+        "configuration": {
+          "alarmType": "High Temperature",
+          "severity": "CRITICAL",
+          "propagate": false,
+          "propagateToOwner": false,
+          "propagateToTenant": false,
+          "useMessageAlarmData": false,
+          "overwriteAlarmDetails": false,
+          "scriptLang": "JS",
+          "alarmDetailsBuildJs": "var details = {};\nif (metadata.prevAlarmDetails) {\n  details = JSON.parse(metadata.prevAlarmDetails);\n}\ndetails.temperature = msg.temperature;\ndetails.humidity = msg.humidity;\ndetails.threshold = 32;\nreturn details;",
+          "alarmDetailsBuildTbel": "var details = {};\nif (metadata.prevAlarmDetails != null) {\n  details = JSON.parse(metadata.prevAlarmDetails);\n}\ndetails.temperature = msg.temperature;\ndetails.humidity = msg.humidity;\ndetails.threshold = 32;\nreturn details;"
+        },
+        "additionalInfo": {
+          "description": "CHI noi nhanh Created de chong lap lenh RPC moi 5s (Updated KHONG noi)",
+          "layoutX": 850,
+          "layoutY": 80
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.action.TbClearAlarmNode",
+        "name": "Clear Alarm: High Temperature",
+        "debugMode": true,
+        "configurationVersion": 0,
+        "configuration": {
+          "alarmType": "High Temperature",
+          "scriptLang": "JS",
+          "alarmDetailsBuildJs": "var details = {};\nif (metadata.prevAlarmDetails) {\n  details = JSON.parse(metadata.prevAlarmDetails);\n}\ndetails.clearedTemperature = msg.temperature;\ndetails.clearedThreshold = 30;\nreturn details;",
+          "alarmDetailsBuildTbel": "var details = {};\nif (metadata.prevAlarmDetails != null) {\n  details = JSON.parse(metadata.prevAlarmDetails);\n}\ndetails.clearedTemperature = msg.temperature;\ndetails.clearedThreshold = 30;\nreturn details;"
+        },
+        "additionalInfo": {
+          "description": "CHI noi nhanh Cleared de tat LED khi T<=30 C (False KHONG noi)",
+          "layoutX": 850,
+          "layoutY": 240
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Tao lenh RPC setCooling(true)",
+        "debugMode": true,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return {\n  msg: {\n    method: 'setCooling',\n    params: { state: true }\n  },\n  metadata: metadata,\n  msgType: 'RPC_CALL_FROM_SERVER_TO_DEVICE'\n};",
+          "tbelScript": "return {\n  msg: {\n    method: 'setCooling',\n    params: { state: true }\n  },\n  metadata: metadata,\n  msgType: 'RPC_CALL_FROM_SERVER_TO_DEVICE'\n};"
+        },
+        "additionalInfo": {
+          "description": "Dong goi lenh RPC bat lam mat theo giao uoc Gateway",
+          "layoutX": 1130,
+          "layoutY": 80
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Tao lenh RPC setCooling(false)",
+        "debugMode": true,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return {\n  msg: {\n    method: 'setCooling',\n    params: { state: false }\n  },\n  metadata: metadata,\n  msgType: 'RPC_CALL_FROM_SERVER_TO_DEVICE'\n};",
+          "tbelScript": "return {\n  msg: {\n    method: 'setCooling',\n    params: { state: false }\n  },\n  metadata: metadata,\n  msgType: 'RPC_CALL_FROM_SERVER_TO_DEVICE'\n};"
+        },
+        "additionalInfo": {
+          "description": "Dong goi lenh RPC tat lam mat theo giao uoc Gateway",
+          "layoutX": 1130,
+          "layoutY": 240
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode",
+        "name": "Gui RPC setCooling xuong Gateway",
+        "debugMode": true,
+        "configurationVersion": 0,
+        "configuration": {
+          "timeoutInSeconds": 5
+        },
+        "additionalInfo": {
+          "description": "Publish xuong topic v1/devices/me/rpc/request/{id}",
+          "layoutX": 1410,
+          "layoutY": 160
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.action.TbLogNode",
+        "name": "Log ket qua RPC",
+        "debugMode": true,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return 'SmartRoom Auto RPC -> msg=' + JSON.stringify(msg) + ', metadata=' + JSON.stringify(metadata);",
+          "tbelScript": "return 'SmartRoom Auto RPC -> msg=' + JSON.stringify(msg) + ', metadata=' + JSON.stringify(metadata);"
+        },
+        "additionalInfo": {
+          "description": "Ghi log phan hoi RPC phuc vu minh chung T12",
+          "layoutX": 1690,
+          "layoutY": 160
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Post telemetry"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 2,
+        "type": "Post attributes"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 4,
+        "type": "HighTemp"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 5,
+        "type": "NormalTemp"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 6,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 7,
+        "type": "Cleared"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 9,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 9,
+        "type": "Failure"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

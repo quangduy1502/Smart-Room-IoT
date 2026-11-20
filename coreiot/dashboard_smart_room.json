@@ -1,0 +1,358 @@
+{
+  "title": "Smart Room IoT - Monitor & Cooling Control (T11)",
+  "name": "Smart Room IoT - Monitor & Cooling Control (T11)",
+  "configuration": {
+    "description": "Template Dashboard T11: Nhiet do, Do am, Trang thai lam mat, Nut RPC setCooling, Do thi lich su va Bang Alarm.",
+    "widgets": {
+      "a1000001-0000-4000-8000-000000000001": {
+        "isSystemType": true,
+        "bundleAlias": "cards",
+        "typeAlias": "simple_card",
+        "type": "latest",
+        "title": "Nhiet do phong hoc",
+        "sizeX": 6,
+        "sizeY": 3,
+        "config": {
+          "datasources": [
+            {
+              "type": "entity",
+              "name": "SmartRoomDevice",
+              "entityAliasId": "e1000001-0000-4000-8000-000000000001",
+              "dataKeys": [
+                {
+                  "name": "temperature",
+                  "type": "timeseries",
+                  "label": "Nhiet do",
+                  "color": "#ef4444",
+                  "units": "°C",
+                  "decimals": 1,
+                  "settings": {}
+                }
+              ]
+            }
+          ],
+          "timewindow": {
+            "realtime": {
+              "timewindowMs": 60000
+            }
+          },
+          "showTitle": true,
+          "backgroundColor": "#ffffff",
+          "color": "#1e293b",
+          "units": "°C",
+          "decimals": 1,
+          "settings": {
+            "labelPosition": "top"
+          }
+        },
+        "id": "a1000001-0000-4000-8000-000000000001"
+      },
+      "a1000001-0000-4000-8000-000000000002": {
+        "isSystemType": true,
+        "bundleAlias": "cards",
+        "typeAlias": "simple_card",
+        "type": "latest",
+        "title": "Do am phong hoc",
+        "sizeX": 6,
+        "sizeY": 3,
+        "config": {
+          "datasources": [
+            {
+              "type": "entity",
+              "name": "SmartRoomDevice",
+              "entityAliasId": "e1000001-0000-4000-8000-000000000001",
+              "dataKeys": [
+                {
+                  "name": "humidity",
+                  "type": "timeseries",
+                  "label": "Do am",
+                  "color": "#0ea5e9",
+                  "units": "%",
+                  "decimals": 1,
+                  "settings": {}
+                }
+              ]
+            }
+          ],
+          "timewindow": {
+            "realtime": {
+              "timewindowMs": 60000
+            }
+          },
+          "showTitle": true,
+          "backgroundColor": "#ffffff",
+          "color": "#1e293b",
+          "units": "%",
+          "decimals": 1,
+          "settings": {
+            "labelPosition": "top"
+          }
+        },
+        "id": "a1000001-0000-4000-8000-000000000002"
+      },
+      "a1000001-0000-4000-8000-000000000003": {
+        "isSystemType": true,
+        "bundleAlias": "cards",
+        "typeAlias": "simple_card",
+        "type": "latest",
+        "title": "Trang thai lam mat (LED)",
+        "sizeX": 6,
+        "sizeY": 3,
+        "config": {
+          "datasources": [
+            {
+              "type": "entity",
+              "name": "SmartRoomDevice",
+              "entityAliasId": "e1000001-0000-4000-8000-000000000001",
+              "dataKeys": [
+                {
+                  "name": "cooling_state",
+                  "type": "timeseries",
+                  "label": "cooling_state",
+                  "color": "#22c55e",
+                  "settings": {}
+                }
+              ]
+            }
+          ],
+          "showTitle": true,
+          "backgroundColor": "#ffffff",
+          "color": "#1e293b",
+          "settings": {
+            "labelPosition": "top"
+          }
+        },
+        "id": "a1000001-0000-4000-8000-000000000003"
+      },
+      "a1000001-0000-4000-8000-000000000004": {
+        "isSystemType": true,
+        "bundleAlias": "rpc",
+        "typeAlias": "round_switch",
+        "type": "rpc",
+        "title": "Dieu khien LED lam mat (RPC setCooling)",
+        "sizeX": 6,
+        "sizeY": 3,
+        "config": {
+          "targetDeviceAliases": [],
+          "targetDeviceAliasIds": [
+            "e1000001-0000-4000-8000-000000000001"
+          ],
+          "showTitle": true,
+          "backgroundColor": "#ffffff",
+          "color": "#1e293b",
+          "settings": {
+            "initialValue": false,
+            "title": "Cong tac LED lam mat",
+            "retrieveValueMethod": "timeseries",
+            "valueKey": "cooling_state",
+            "parseValueFunction": "return data ? true : false;",
+            "setValueMethod": "setCooling",
+            "requestTimeout": 5000,
+            "requestPersistent": false,
+            "showOnOffLabels": true,
+            "convertValueFunction": "return { state: !!value };"
+          }
+        },
+        "id": "a1000001-0000-4000-8000-000000000004"
+      },
+      "a1000001-0000-4000-8000-000000000005": {
+        "isSystemType": true,
+        "bundleAlias": "charts",
+        "typeAlias": "timeseries",
+        "type": "timeseries",
+        "title": "Bieu do lich su Nhiet do & Do am",
+        "sizeX": 14,
+        "sizeY": 6,
+        "config": {
+          "datasources": [
+            {
+              "type": "entity",
+              "name": "SmartRoomDevice",
+              "entityAliasId": "e1000001-0000-4000-8000-000000000001",
+              "dataKeys": [
+                {
+                  "name": "temperature",
+                  "type": "timeseries",
+                  "label": "Nhiet do (°C)",
+                  "color": "#ef4444",
+                  "units": "°C",
+                  "decimals": 1,
+                  "settings": {}
+                },
+                {
+                  "name": "humidity",
+                  "type": "timeseries",
+                  "label": "Do am (%)",
+                  "color": "#0ea5e9",
+                  "units": "%",
+                  "decimals": 1,
+                  "settings": {}
+                }
+              ]
+            }
+          ],
+          "timewindow": {
+            "realtime": {
+              "timewindowMs": 900000
+            }
+          },
+          "showTitle": true,
+          "backgroundColor": "#ffffff",
+          "color": "#1e293b",
+          "settings": {
+            "showLegend": true
+          }
+        },
+        "id": "a1000001-0000-4000-8000-000000000005"
+      },
+      "a1000001-0000-4000-8000-000000000006": {
+        "isSystemType": true,
+        "bundleAlias": "alarm_widgets",
+        "typeAlias": "alarms_table",
+        "type": "alarm",
+        "title": "Bang canh bao vuot nguong (High Temperature)",
+        "sizeX": 10,
+        "sizeY": 6,
+        "config": {
+          "datasources": [
+            {
+              "type": "entity",
+              "name": "SmartRoomDevice",
+              "entityAliasId": "e1000001-0000-4000-8000-000000000001",
+              "dataKeys": [
+                {
+                  "name": "createdTime",
+                  "type": "alarm",
+                  "label": "Thoi gian",
+                  "settings": {}
+                },
+                {
+                  "name": "type",
+                  "type": "alarm",
+                  "label": "Loai canh bao",
+                  "settings": {}
+                },
+                {
+                  "name": "severity",
+                  "type": "alarm",
+                  "label": "Muc do",
+                  "settings": {}
+                },
+                {
+                  "name": "status",
+                  "type": "alarm",
+                  "label": "Trang thai",
+                  "settings": {}
+                }
+              ]
+            }
+          ],
+          "timewindow": {
+            "realtime": {
+              "timewindowMs": 3600000
+            }
+          },
+          "showTitle": true,
+          "backgroundColor": "#ffffff",
+          "color": "#1e293b",
+          "settings": {
+            "alarmsTitle": "Canh bao nhiet do > 32°C",
+            "enableSelection": true,
+            "enableStatusFilter": true,
+            "alarmStatusList": [
+              "ACTIVE_UNACK",
+              "ACTIVE_ACK",
+              "CLEARED_UNACK",
+              "CLEARED_ACK"
+            ]
+          }
+        },
+        "id": "a1000001-0000-4000-8000-000000000006"
+      }
+    },
+    "states": {
+      "default": {
+        "name": "Smart Room",
+        "root": true,
+        "layouts": {
+          "main": {
+            "widgets": {
+              "a1000001-0000-4000-8000-000000000001": {
+                "sizeX": 6,
+                "sizeY": 3,
+                "row": 0,
+                "col": 0
+              },
+              "a1000001-0000-4000-8000-000000000002": {
+                "sizeX": 6,
+                "sizeY": 3,
+                "row": 0,
+                "col": 6
+              },
+              "a1000001-0000-4000-8000-000000000003": {
+                "sizeX": 6,
+                "sizeY": 3,
+                "row": 0,
+                "col": 12
+              },
+              "a1000001-0000-4000-8000-000000000004": {
+                "sizeX": 6,
+                "sizeY": 3,
+                "row": 0,
+                "col": 18
+              },
+              "a1000001-0000-4000-8000-000000000005": {
+                "sizeX": 14,
+                "sizeY": 6,
+                "row": 3,
+                "col": 0
+              },
+              "a1000001-0000-4000-8000-000000000006": {
+                "sizeX": 10,
+                "sizeY": 6,
+                "row": 3,
+                "col": 14
+              }
+            },
+            "gridSettings": {
+              "backgroundColor": "#f8fafc",
+              "columns": 24,
+              "margin": 10,
+              "backgroundSizeMode": "100%"
+            }
+          }
+        }
+      }
+    },
+    "entityAliases": {
+      "e1000001-0000-4000-8000-000000000001": {
+        "id": "e1000001-0000-4000-8000-000000000001",
+        "alias": "SmartRoomDevice",
+        "filter": {
+          "type": "entityName",
+          "resolveMultiple": false,
+          "entityType": "DEVICE",
+          "entityNameFilter": "SmartRoom_Gateway"
+        }
+      }
+    },
+    "timewindow": {
+      "displayValue": "",
+      "selectedTab": 0,
+      "realtime": {
+        "realtimeType": 0,
+        "interval": 1000,
+        "timewindowMs": 900000
+      }
+    },
+    "settings": {
+      "stateControllerId": "entity",
+      "showTitle": true,
+      "showDashboardsSelect": true,
+      "showEntitiesSelect": true,
+      "showDashboardTimewindow": true,
+      "showDashboardExport": true,
+      "toolbarAlwaysOpen": true
+    }
+  }
+}
